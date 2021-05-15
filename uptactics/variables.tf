@@ -1,5 +1,5 @@
 variable "environment" {
-  default = "staging"
+  default     = "staging"
   description = "Environment"
 }
 
@@ -13,6 +13,19 @@ variable "aws_profile" {
 
 variable "aws_region" {
   description = "AWS Region"
+}
+
+variable "instance_ami" {
+  default = "ami-09e67e426f25ce0d7"
+  description = "Ubuntu Server 20.04 LTS"
+}
+
+variable "instance_type" {
+  default = "t2.micro"
+}
+
+variable "key_path" {
+  default = "keys/mykeypair.pub"
 }
 
 locals {
