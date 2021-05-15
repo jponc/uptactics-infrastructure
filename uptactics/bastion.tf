@@ -54,9 +54,3 @@ resource "aws_key_pair" "mykeypair" {
   key_name   = "${local.service_name_env}-keypair"
   public_key = file(var.key_path)
 }
-
-resource "aws_ssm_parameter" "allow_ssh_security_group_ssm" {
-  name  = "/${var.service_name}/${var.environment}/ALLOW_SSH_SECURITY_GROUP"
-  type  = "String"
-  value = aws_security_group.allow-ssh.id
-}
