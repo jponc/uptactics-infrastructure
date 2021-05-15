@@ -130,3 +130,16 @@ resource "aws_route_table_association" "route-table-private-subnet-2-association
   subnet_id      = aws_subnet.private-subnet-2.id
   route_table_id = aws_route_table.route-table-private.id
 }
+
+# Add Private subnet's and default security group to SSM
+resource "aws_ssm_parameter" "private_subnets_ssm" {
+  name  = "/${var.service_name}/${var.environment}/PRIVATE_SUBNET_IDS"
+  type  = "StringList"
+  value = join(",", [aws_subnet.private-subnet-1.id, aws_subnet.private-subnet-2.id])
+}
+
+resource "aws_ssm_parameter" "default_security_group_ssm" {
+  name  = "/${var.service_name}/${var.environment}/DEFAULT_SECURITY_GROUP"
+  type  = "String"
+  value = aws_vpc.vpc.default_security_group_id
+}
