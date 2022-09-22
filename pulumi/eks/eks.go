@@ -10,7 +10,7 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
 )
 
-func CreateInfrastructure(ctx *pulumi.Context, vpcId pulumi.StringInput, privateSubnetIds []pulumi.StringInput, publicSubnetIds []pulumi.StringInput) error {
+func CreateInfrastructure(ctx *pulumi.Context, vpcId pulumi.StringInput, privateSubnetIds []pulumi.StringInput, publicSubnetIds []pulumi.StringInput) (*eks.Cluster, error) {
 	conf := config.New(ctx, "")
 	clusterName := conf.Require("clusterName")
 	clusterRole := conf.Require("clusterRole")
@@ -34,7 +34,7 @@ func CreateInfrastructure(ctx *pulumi.Context, vpcId pulumi.StringInput, private
 		},
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Create EKS Policy Attachments
@@ -51,7 +51,7 @@ func CreateInfrastructure(ctx *pulumi.Context, vpcId pulumi.StringInput, private
 			Role:      eksRole.Name,
 		})
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
@@ -68,7 +68,7 @@ func CreateInfrastructure(ctx *pulumi.Context, vpcId pulumi.StringInput, private
 		},
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Create EKS Control Plane
@@ -94,7 +94,7 @@ func CreateInfrastructure(ctx *pulumi.Context, vpcId pulumi.StringInput, private
 		},
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Export kubeconfig
@@ -120,7 +120,7 @@ func CreateInfrastructure(ctx *pulumi.Context, vpcId pulumi.StringInput, private
 		},
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Create Farget Policy Attachment
@@ -130,7 +130,7 @@ func CreateInfrastructure(ctx *pulumi.Context, vpcId pulumi.StringInput, private
 		Role:      fargateRole.Name,
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Create AWS Fargate Profile
@@ -154,7 +154,7 @@ func CreateInfrastructure(ctx *pulumi.Context, vpcId pulumi.StringInput, private
 		},
 	}, pulumi.DependsOn([]pulumi.Resource{eksCluster}))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	fargateProfileAppsName := conf.Require("fargateProfileName") + "-apps"
@@ -179,10 +179,10 @@ func CreateInfrastructure(ctx *pulumi.Context, vpcId pulumi.StringInput, private
 		},
 	}, pulumi.DependsOn([]pulumi.Resource{eksCluster}))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return eksCluster, nil
 }
 
 // Create the KubeConfig Structure as per https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html

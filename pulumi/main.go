@@ -16,17 +16,17 @@ func main() {
 			return err
 		}
 
-		err = eks.CreateInfrastructure(ctx, vpcId, privateSubnetIds, publicSubnetIds)
+		eksCluster, err := eks.CreateInfrastructure(ctx, vpcId, privateSubnetIds, publicSubnetIds)
 		if err != nil {
 			return err
 		}
 
-		err = traefik.CreateTraefikIngress(ctx)
+		err = traefik.CreateTraefikIngress(ctx, eksCluster)
 		if err != nil {
 			return err
 		}
 
-		err = certmanager.CreateCertManager(ctx)
+		err = certmanager.CreateCertManager(ctx, eksCluster)
 		if err != nil {
 			return err
 		}

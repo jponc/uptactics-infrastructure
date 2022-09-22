@@ -1,6 +1,7 @@
 package traefik
 
 import (
+	"github.com/pulumi/pulumi-aws/sdk/v5/go/aws/eks"
 	appsv1 "github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes/apps/v1"
 	corev1 "github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes/core/v1"
 	metav1 "github.com/pulumi/pulumi-kubernetes/sdk/v3/go/kubernetes/meta/v1"
@@ -8,7 +9,7 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-func CreateTraefikIngress(ctx *pulumi.Context) error {
+func CreateTraefikIngress(ctx *pulumi.Context, eksCluster *eks.Cluster) error {
 	// Create Traefik Namespace
 	_, err := corev1.NewNamespace(ctx, "traefik-namespace", &corev1.NamespaceArgs{
 		ApiVersion: pulumi.String("v1"),
@@ -16,7 +17,7 @@ func CreateTraefikIngress(ctx *pulumi.Context) error {
 		Metadata: metav1.ObjectMetaArgs{
 			Name: pulumi.String("traefik"),
 		},
-	})
+	}, pulumi.DependsOn([]pulumi.Resource{eksCluster}))
 	if err != nil {
 		return err
 	}
@@ -74,7 +75,7 @@ func CreateTraefikIngress(ctx *pulumi.Context) error {
 				},
 			},
 		},
-	})
+	}, pulumi.DependsOn([]pulumi.Resource{eksCluster}))
 	if err != nil {
 		return err
 	}
@@ -99,7 +100,7 @@ func CreateTraefikIngress(ctx *pulumi.Context) error {
 				Name:      pulumi.String(traefikName),
 			},
 		},
-	})
+	}, pulumi.DependsOn([]pulumi.Resource{eksCluster}))
 	if err != nil {
 		return err
 	}
@@ -112,7 +113,7 @@ func CreateTraefikIngress(ctx *pulumi.Context) error {
 			Namespace: pulumi.String("traefik"),
 			Name:      pulumi.String(traefikName),
 		},
-	})
+	}, pulumi.DependsOn([]pulumi.Resource{eksCluster}))
 	if err != nil {
 		return err
 	}
@@ -178,7 +179,7 @@ func CreateTraefikIngress(ctx *pulumi.Context) error {
 				},
 			},
 		},
-	})
+	}, pulumi.DependsOn([]pulumi.Resource{eksCluster}))
 	if err != nil {
 		return err
 	}
