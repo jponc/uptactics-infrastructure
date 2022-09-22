@@ -8,7 +8,8 @@ import (
 func CreateCertManager(ctx *pulumi.Context) error {
 	// Create CertManager from Yaml
 	_, err := yaml.NewConfigFile(ctx, "certmanager", &yaml.ConfigFileArgs{
-		File: "cert-manager.yaml",
+		File:      "certmanager/cert-manager.yaml",
+		SkipAwait: false,
 	})
 	if err != nil {
 		return err
