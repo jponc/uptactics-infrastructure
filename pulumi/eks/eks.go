@@ -157,6 +157,31 @@ func CreateInfrastructure(ctx *pulumi.Context, vpcId pulumi.StringInput, private
 		return err
 	}
 
+	fargateProfileAppsName := conf.Require("fargateProfileName") + "-apps"
+	_, err = eks.NewFargateProfile(ctx, fargateProfileAppsName, &eks.FargateProfileArgs{
+		ClusterName:         pulumi.String(clusterName),
+		FargateProfileName:  pulumi.String(fargateProfileAppsName),
+		PodExecutionRoleArn: pulumi.StringInput(fargateRole.Arn),
+		SubnetIds:           pulumi.StringArray(privateSubnetIds),
+		Selectors: eks.FargateProfileSelectorArray{
+			eks.FargateProfileSelectorArgs{
+				Namespace: pulumi.String("traefik"),
+			},
+			eks.FargateProfileSelectorArgs{
+				Namespace: pulumi.String("cert-manager"),
+			},
+			eks.FargateProfileSelectorArgs{
+				Namespace: pulumi.String("apps-*"),
+			},
+		},
+		Tags: pulumi.StringMap{
+			"Name": pulumi.String(fargateProfileAppsName),
+		},
+	}, pulumi.DependsOn([]pulumi.Resource{eksCluster}))
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

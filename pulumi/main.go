@@ -1,7 +1,9 @@
 package main
 
 import (
+	"uptactics/certmanager"
 	"uptactics/eks"
+	"uptactics/traefik"
 	"uptactics/vpc"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
@@ -13,13 +15,22 @@ func main() {
 		if err != nil {
 			return err
 		}
+
 		err = eks.CreateInfrastructure(ctx, vpcId, privateSubnetIds, publicSubnetIds)
 		if err != nil {
 			return err
 		}
 
-		// Export the name of the bucket
-		// ctx.Export("bucketName", bucket.ID())
+		err = traefik.CreateTraefikIngress(ctx)
+		if err != nil {
+			return err
+		}
+
+		err = certmanager.CreateCertManager(ctx)
+		if err != nil {
+			return err
+		}
+
 		return nil
 	})
 }
