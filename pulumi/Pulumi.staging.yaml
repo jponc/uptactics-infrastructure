@@ -1,0 +1,20 @@
+config:
+  aws:profile: uptactics
+  aws:region: us-east-1
+  uptactics:vpcName: u-staging-vpc
+  uptactics:vpcCidr: 10.0.0.0/16
+  uptactics:igwName: u-staging-igw
+  uptactics:subnetNames: u-staging-private1,u-staging-private2,u-staging-public1,u-staging-public2
+  uptactics:subnetCidrs: 10.0.1.0/24,10.0.2.0/24,10.0.3.0/24,10.0.4.0/24
+  uptactics:subnetAZs: us-east-1a,us-east-1c,us-east-1a,us-east-1c
+  uptactics:natGwName: u-staging-nat
+  uptactics:privateRTName: u-staging-rt-private
+  uptactics:publicRTName: u-staging-rt-public
+  uptactics:clusterName: u-staging-k8s-cluster
+  uptactics:clusterVersion: 1.23
+  uptactics:clusterRole: u-staging-k8s-cluster-role
+  uptactics:fargateProfileName: u-staging-k8s-fargate
+  uptactics:fargateRoleName: u-staging-k8s-fargate-role
+
+
+
